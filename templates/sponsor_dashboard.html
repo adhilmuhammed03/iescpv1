@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sponsor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+      .full-height {
+          height: 75vh;
+      }
+      .bg-form {
+          background-color: #eeeee4;
+      }
+  </style>
+</head>
+<body class="bg-form">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/sponsor_dashboard"><b>IESCP</b></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/sponsor_dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/find">Find</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Stats</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h4>Welcome {{ usr.name }}</h4>
+    <h4>Active campaigns :</h4>
+
+    <!-- Active Campaigns -->
+    {% if not campaigns %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Campaign</button>
+    <!-- Add Campaign Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Enter Campaign Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/add/campaign/{{ usr.user_id }}" method="POST">
+              <div class="form-group mb-3">
+                <label for="campaignName">Campaign name</label>
+                <input type="text" class="form-control" id="campaignName" name="campaignName" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="campaignDescription">Campaign Description</label>
+                <textarea class="form-control" id="campaignDescription" rows="3" name="campaignDescription" required></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label for="startDate">Start Date</label>
+                <input id="startDate" class="form-control" type="date" name="startDate" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="endDate">End Date</label>
+                <input id="endDate" class="form-control" type="date" name="endDate" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="budget">Budget</label>
+                <input type="number" class="form-control" id="budget" name="budget" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="niche">Niche</label>
+                <select class="form-control" id="niche" name="niche" required>
+                  <option value="" disabled selected>Select a niche</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Fashion">Fashion</option>
+                  <option value="Education">Education</option>
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="visibility">Visibility</label>
+                <select class="form-control" id="visibility" name="visibility" required>
+                  <option value="0">Public</option>
+                  <option value="1">Private</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Add Campaign Modal -->
+    {% else %}
+    <div class="row">
+      {% for i in range(campaigns|length) %}
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ campaigns[i].campaign_name }}</h5>
+            <p class="card-text">{{ campaigns[i].campaign_description }}</p>
+            <p>Budget: <span>{{ campaigns[i].budget }}</span></p>
+
+            <!-- View Modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">View</button>
+            <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">Campaign Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <label for="campaignId">Campaign Id</label>
+                    <input type="text" class="form-control mb-3" id="campaignId" value="{{ campaigns[i].campaign_id }}" readonly>
+                    <label for="campaignName">Campaign name</label>
+                    <input type="text" class="form-control mb-3" id="campaignName" value="{{ campaigns[i].campaign_name }}" readonly>
+                    <label for="campaignDescription">Campaign Description</label>
+                    <textarea class="form-control mb-3" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
+                    <label for="startDate">Start Date</label>
+                    <input type="text" class="form-control mb-3" id="startDate" value="{{ campaigns[i].start_date }}" readonly>
+                    <label for="endDate">End Date</label>
+                    <input type="text" class="form-control mb-3" id="endDate" value="{{ campaigns[i].end_date }}" readonly>
+                    <label for="budget">Budget</label>
+                    <input type="text" class="form-control mb-3" id="budget" value="{{ campaigns[i].budget }}" readonly>
+                    <label for="niche">Niche</label>
+                    <input type="text" class="form-control mb-3" id="niche" value="{{ campaigns[i].niche }}" readonly>
+                    <label for="visibility">Visibility (0 -> Public, 1 -> Private)</label>
+                    <input type="text" class="form-control mb-3" id="visibility" value="{{ campaigns[i].visibility }}" readonly>
+                    <label for="status">Status (0 -> Not Assigned, 1 -> Assigned)</label>
+                    <input type="text" class="form-control mb-3" id="status" value="{{ campaigns[i].status }}" readonly>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End of View Modal -->
+
+            <!-- Edit Modal -->
+            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCampaignModal{{ i }}">Edit</button>
+            <div class="modal fade" id="editCampaignModal{{ i }}" tabindex="-1" aria-labelledby="editCampaignModalLabel{{ i }}" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editCampaignModalLabel{{ i }}">Edit Campaign Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/edit/campaign/{{ campaigns[i].campaign_id }}" method="POST">
+                      <div class="form-group mb-3">
+                        <label for="campaignName">Campaign name</label>
+                        <input type="text" class="form-control" id="campaignName" name="campaignName" value="{{ campaigns[i].campaign_name }}" required>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="campaignDescription">Campaign Description</label>
+                        <textarea class="form-control" id="campaignDescription" rows="3" name="campaignDescription" required>{{ campaigns[i].campaign_description }}</textarea>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="startDate">Start Date</label>
+                        <input id="startDate" class="form-control" type="date" name="startDate" value="{{ campaigns[i].start_date }}" required>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="endDate">End Date</label>
+                        <input id="endDate" class="form-control" type="date" name="endDate" value="{{ campaigns[i].end_date }}" required>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="budget">Budget</label>
+                        <input type="number" class="form-control" id="budget" name="budget" value="{{ campaigns[i].budget }}" required>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="niche">Niche</label>
+                        <select class="form-control" id="niche" name="niche" required>
+                          <option value="Travel" {% if campaigns[i].niche == "Travel" %}selected{% endif %}>Travel</option>
+                          <option value="Technology" {% if campaigns[i].niche == "Technology" %}selected{% endif %}>Technology</option>
+                          <option value="Fashion" {% if campaigns[i].niche == "Fashion" %}selected{% endif %}>Fashion</option>
+                          <option value="Education" {% if campaigns[i].niche == "Education" %}selected{% endif %}>Education</option>
+                        </select>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="visibility">Visibility</label>
+                        <select class="form-control" id="visibility" name="visibility" required>
+                          <option value="0" {% if campaigns[i].visibility == 0 %}selected{% endif %}>Public</option>
+                          <option value="1" {% if campaigns[i].visibility == 1 %}selected{% endif %}>Private</option>
+                        </select>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End of Edit Modal -->
+
+            <!-- Delete Button -->
+            <form action="/delete/campaign/{{ campaigns[i].campaign_id }}" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Add New Campaign</button>
+    <!-- Add Campaign Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Enter Campaign Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/add/campaign/{{ usr.user_id }}" method="POST">
+              <div class="form-group mb-3">
+                <label for="campaignName">Campaign name</label>
+                <input type="text" class="form-control" id="campaignName" name="campaignName" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="campaignDescription">Campaign Description</label>
+                <textarea class="form-control" id="campaignDescription" rows="3" name="campaignDescription" required></textarea>
+              </div>
+              <div class="form-group mb-3">
+                <label for="startDate">Start Date</label>
+                <input id="startDate" class="form-control" type="date" name="startDate" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="endDate">End Date</label>
+                <input id="endDate" class="form-control" type="date" name="endDate" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="budget">Budget</label>
+                <input type="number" class="form-control" id="budget" name="budget" required>
+              </div>
+              <div class="form-group mb-3">
+                <label for="niche">Niche</label>
+                <select class="form-control" id="niche" name="niche" required>
+                  <option value="" disabled selected>Select a niche</option>
+                  <option value="Travel">Travel</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Fashion">Fashion</option>
+                  <option value="Education">Education</option>
+                </select>
+              </div>
+              <div class="form-group mb-3">
+                <label for="visibility">Visibility</label>
+                <select class="form-control" id="visibility" name="visibility" required>
+                  <option value="0">Public</option>
+                  <option value="1">Private</option>
+                </select>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Add Campaign Modal -->
+    </div>
+    {% endif %}
+
+    <!-- Incoming Ads Section -->
+    <div class="row">
+      <h4>Incoming Ad requests :</h4>
+      {% if incoming_requests %}
+      {% for i in range(incoming_requests|length) %}
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Campaign Name : {{ ad[incoming_requests[i].adrequest_id].campaign_name}}</h5>
+            <h6 class="card-text"> Source : {{ sources[incoming_requests[i].adrequest_id].name }}</h6>
+        
+
+      <!-- View Incoming Ad requests Modal -->
+       
+       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewAdRequestModal{{ i }}">View</button>
+       <div class="modal fade" id="viewAdRequestModal{{ i }}" tabindex="-1" aria-labelledby="viewAdRequestModalLabel{{ i }}" aria-hidden="true">
+         <div class="modal-dialog">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="viewAdRequestModalLabel{{ i }}">Ad Request Details</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+               <label for="adRequestId">Ad Request Id</label>
+               <input type="text" class="form-control mb-3" id="adRequestId" value="{{incoming_requests[i].adrequest_id}}" readonly>
+               <label for="campaignName">Campaign Name</label>
+               <input type="text" class="form-control mb-3" id="campaignName" value="{{ ad[incoming_requests[i].adrequest_id].campaign_name }}" readonly>
+               <label for="target">Target</label>
+               <input type="text" class="form-control mb-3" id="target" value="{{targets[incoming_requests[i].adrequest_id].name}}" readonly>
+               
+                <label for="campaignDescription">Requirements</label>
+                <textarea class="form-control" id="adrequestDescription" rows="3" name="adrequestDescription" readonly>{{incoming_requests[i].requirements}}</textarea>
+               <label for="status">Status</label>
+               <input type="text" class="form-control mb-3" id="status" value="{{incoming_requests[i].status }}" readonly>
+               <label for="amount">Amount</label>
+               <input type="text" class="form-control mb-3" id="status" value="{{incoming_requests[i].amount }}" readonly>
+               <label for="paymentstatus">Payment Status</label>
+               <input type="text" class="form-control mb-3" id="paymentstatus" value="{{incoming_requests[i].payment_status }}" readonly>
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             </div>
+           </div>
+         </div>
+       </div>
+        <!-- End of View Incoming Ad Modal -->
+       <!-- Accept Ad Request Button -->
+       <form action="/accept/adrequest/{{ incoming_requests[i].adrequest_id }}" method="POST" class="d-inline">
+        <button type="submit" class="btn btn-secondary">Accept</button>
+      </form>
+
+        <!-- Delete Ad Request Button -->
+            <form action="/delete/adrequest/{{ incoming_requests[i].adrequest_id }}" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <p>No outgoing ad requests found.</p>
+    {% endif %}
+    </div>
+
+
+    <!-- Outgoing Ads Section -->
+    <div class="row">
+      <h4>Outgoing Ad requests :</h4>
+      {% if outgoing_requests %}
+      {% for i in range(outgoing_requests|length) %}
+      <div class="col-md-4">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">Campaign Name : {{ ad[outgoing_requests[i].adrequest_id].campaign_name}}</h5>
+            <h6 class="card-text"> Target : {{ targets[outgoing_requests[i].adrequest_id].name }}</h6>
+        
+
+      <!-- View Outgoing Ad requests Modal -->
+       
+       <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewAdRequestModal{{ i }}">View</button>
+       <div class="modal fade" id="viewAdRequestModal{{ i }}" tabindex="-1" aria-labelledby="viewAdRequestModalLabel{{ i }}" aria-hidden="true">
+         <div class="modal-dialog">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="viewAdRequestModalLabel{{ i }}">Ad Request Details</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+               <label for="adRequestId">Ad Request Id</label>
+               <input type="text" class="form-control mb-3" id="adRequestId" value="{{outgoing_requests[i].adrequest_id}}" readonly>
+               <label for="campaignName">Campaign Name</label>
+               <input type="text" class="form-control mb-3" id="campaignName" value="{{ ad[outgoing_requests[i].adrequest_id].campaign_name }}" readonly>
+               <label for="target">Target</label>
+               <input type="text" class="form-control mb-3" id="target" value="{{targets[outgoing_requests[i].adrequest_id].name}}" readonly>
+               
+                <label for="campaignDescription">Requirements</label>
+                <textarea class="form-control" id="adrequestDescription" rows="3" name="adrequestDescription" readonly>{{outgoing_requests[i].requirements}}</textarea>
+               <label for="status">Status</label>
+               <input type="text" class="form-control mb-3" id="status" value="{{outgoing_requests[i].status }}" readonly>
+               <label for="amount">Amount</label>
+               <input type="text" class="form-control mb-3" id="status" value="{{outgoing_requests[i].amount }}" readonly>
+               <label for="paymentstatus">Payment Status</label>
+               <input type="text" class="form-control mb-3" id="paymentstatus" value="{{outgoing_requests[i].payment_status }}" readonly>
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             </div>
+           </div>
+         </div>
+       </div>
+        <!-- End of View Outgoing Ad Modal -->
+      
+
+            <!-- Edit Ad request Modal -->
+          <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editAdRequestModal{{ i }}">Edit</button>
+          <div class="modal fade" id="editAdRequestModal{{ i }}" tabindex="-1" aria-labelledby="editAdRequestModalLabel{{ i }}" aria-hidden="true">
+         <div class="modal-dialog">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="editAdRequestModalLabel{{ i }}">Ad Request Details</h5>
+               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+              <form action="/edit/adrequest/{{ outgoing_requests[i].adrequest_id }}" method="POST">
+                <div class="form-group mb-3">
+                  <label for="adRequestId">Ad Request Id</label>
+                  <input type="text" class="form-control mb-3" id="adRequestId" value="{{outgoing_requests[i].adrequest_id}}" readonly>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="campaignName">Campaign Name</label>
+                  <input type="text" class="form-control mb-3" id="campaignName" value="{{ ad[outgoing_requests[i].adrequest_id].campaign_name }}" readonly>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="target">Target</label>
+                  <input type="text" class="form-control mb-3" id="target" value="{{targets[outgoing_requests[i].adrequest_id].name}}" readonly>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="adrequestDescription">Requirements</label>
+                  <textarea class="form-control" id="adrequestDescription" rows="3" name="adrequestDescription">{{outgoing_requests[i].requirements}}</textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="status">Status</label>
+                  <input type="text" class="form-control mb-3" id="status" value="{{outgoing_requests[i].status }}" readonly>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="amount">Amount</label>
+                  <input type="text" class="form-control mb-3" id="status" value="{{outgoing_requests[i].amount }}" name="amount" >
+                </div>
+                <div class="form-group mb-3">
+                  <label for="paymentstatus">Payment Status</label>
+                  <input type="text" class="form-control mb-3" id="paymentstatus" value="{{outgoing_requests[i].payment_status }}" readonly>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+             </div>
+           </div>
+         </div>
+       </div>
+            <!-- End of Edit Ad request Modal -->
+
+            <!-- Delete Ad Request Button -->
+            <form action="/delete/adrequest/{{ outgoing_requests[i].adrequest_id }}" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+    <p>No outgoing ad requests found.</p>
+    {% endif %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+
+</body>
+</html>
