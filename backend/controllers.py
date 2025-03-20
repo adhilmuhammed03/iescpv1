@@ -61,10 +61,11 @@ def sponsor_dashboard():
             ad_request_details = fetch_ad_requests_details()
             targets = fetch_target_details()
             sources = fetch_source_details()
+            completed = fetch_completed_ad_requests(usr['user_id'])
             return render_template("sponsor_dashboard.html", campaigns=campaigns, usr=usr,
                                    incoming_requests=incoming_requests,
                                    outgoing_requests=outgoing_requests,ad=ad_request_details,
-                                   targets=targets,sources=sources)
+                                   targets=targets,sources=sources,completed=completed)
     return "<h1>Unauthorized Access</h1>"
 
 @app.route("/login", methods=["GET", "POST"])
