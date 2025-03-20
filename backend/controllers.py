@@ -5,7 +5,83 @@ from dateutil import parser
 from sqlalchemy import or_
 import backend.init_db
 app.secret_key = 'iescp'
+@app.route("/profile/<int:user_id>")
+def profile(user_id):
+    user = Users.query.filter_by(user_id=user_id).first()
+    
+    if not user:
+        return "<h1>User not found</h1>", 404
 
+    # Fetch reviews for this user from AdRequest table
+    reviews = AdRequest.query.filter_by(target=user_id).filter(AdRequest.review.isnot(None)).all()
+
+    # Determine the role and prepare data accordingly
+    profile_data = {
+        "name": user.name,
+        "email": user.email,
+        "role": "Sponsor" if user.role == 2 else "Influencer",
+        "reviews": reviews
+    }
+
+    if user.role == 1:  # Influencer Profile
+        profile_data.update({
+            "niche": user.niche,
+            "followers": user.followers,
+            "platform": user.platform
+        })
+
+    return render_template("profile.html", profile_data=profile_data)
+
+@app.route("/stats")
+def stats():
+    if 'user' in session:
+        usr = session['user']
+        if usr['role'] == 0:
+            total_influencers = Users.query.filter_by(role=1).count() or 0
+            total_sponsors = Users.query.filter_by(role=2).count() or 0
+            total_ad_requests = AdRequest.query.count() or 0
+            total_campaigns = Campaign.query.count() or 0
+
+            stats_data = {
+                "total_influencers": total_influencers,
+                "total_sponsors": total_sponsors,
+                "total_ad_requests": total_ad_requests,
+                "total_campaigns": total_campaigns
+            }
+
+            return render_template("admin_stats.html", stats_data=stats_data)
+        elif usr['role'] == 1:  # Influencer Role
+            total_ad_requests = AdRequest.query.filter_by(target=usr['user_id']).count() or 0
+            accepted_requests = AdRequest.query.filter_by(target=usr['user_id'], status="accepted").count() or 0
+            completed_requests = AdRequest.query.filter_by(target=usr['user_id'], status="completed").count() or 0
+            total_earnings = db.session.query(db.func.sum(AdRequest.amount)).filter_by(target=usr['user_id'], status="completed").scalar() or 0
+
+            stats_data = {
+                "total_ad_requests": total_ad_requests,
+                "accepted_requests": accepted_requests,
+                "completed_requests": completed_requests,
+                "total_earnings": total_earnings
+            }
+
+            return render_template("influencer_stats.html", stats_data=stats_data)
+        elif usr['role'] == 2:  # Sponsor Role
+            total_campaigns = Campaign.query.filter_by(sponsor_id=usr['user_id']).count() or 0
+            total_ad_requests = AdRequest.query.filter_by(source=usr['user_id']).count() or 0
+            accepted_requests = AdRequest.query.filter_by(source=usr['user_id'], status="accepted").count() or 0
+            completed_requests = AdRequest.query.filter_by(source=usr['user_id'], status="completed").count() or 0
+            total_budget_spent = db.session.query(db.func.sum(AdRequest.amount)).filter_by(source=usr['user_id'], status="completed").scalar() or 0
+
+            stats_data = {
+                "total_campaigns": total_campaigns,
+                "total_ad_requests": total_ad_requests,
+                "accepted_requests": accepted_requests,
+                "completed_requests": completed_requests,
+                "total_budget_spent": total_budget_spent
+            }
+
+            return render_template("sponsor_stats.html", stats_data=stats_data)
+
+    return "<h1>Unauthorized Access</h1>", 403
 @app.route("/admin_dashboard")
 def admin_dashboard():
     if 'user' in session:
@@ -269,7 +345,7 @@ def fetch_source_details():
 def edit_ad_request(adrequest_id):
     ad_request = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
     if request.method == "POST":
-        description = request.form.get('adrequestDescription')
+        description = request.form.get('requirements')
         amount = request.form.get('amount')
     
         ad_request.requirements = description

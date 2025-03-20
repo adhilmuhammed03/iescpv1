@@ -146,7 +146,7 @@
                         <a class="nav-link" href="/find"><i class="fas fa-search me-1"></i>Find</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i>Stats</a>
+                        <a class="nav-link" href="/stats"><i class="fas fa-chart-bar me-1"></i>Stats</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
@@ -237,6 +237,7 @@
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">
                 <i class="bi bi-eye-fill btn-icon"></i>View Details
               </button>
+              <a href="{{ url_for('profile', user_id=campaigns[i].sponsor_id) }}" class="btn btn-warning">View Owner's Public Profile</a>
               <!-- Send Ad request button -->
               <button type="button" class="btn btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#adRequestModal{{ i }}">
                 <i class="bi bi-send-fill btn-icon"></i>Send Ad Request
