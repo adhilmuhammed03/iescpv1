@@ -1,167 +1,442 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Influencer Find</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .full-height{
-            height: 75vh;
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            transition: all 0.3s ease;
         }
-        .bg-form {
-            background-color: #eeeee4;
+        
+        .full-height {
+            min-height: 85vh;
+        }
+        
+        .navbar {
+            background-color: #1e1e1e !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card {
+            background-color: #1e1e1e;
+            border: none;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border-left: 4px solid #198754;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-primary {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        
+        .btn-success {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        
+        .modal-content {
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+        }
+        
+        .form-control {
+            background-color: #2d2d2d;
+            border: 1px solid #444;
+            color: #e0e0e0;
+        }
+        
+        .form-control:focus {
+            background-color: #333;
+            color: #fff;
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .search-bar {
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:focus {
+            box-shadow: 0 0 15px rgba(25, 135, 84, 0.5);
+        }
+        
+        .campaign-tag {
+            background-color: #198754;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .campaign-budget {
+            font-weight: bold;
+            color: #ffc107;
+        }
+        
+        .btn-icon {
+            margin-right: 5px;
+        }
+        
+        .card-buttons {
+            margin-top: 15px;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 15px;
+        }
+        
+        .filters-section {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .no-campaigns {
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+        }
+        
+        .badge-budget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: #212529;
         }
     </style>
-</head>
-  <body class="bg-form">
-<!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/influencer_dashboard"><b>IESCP</b></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="influencer_dashboard">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/find">Find</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Stats</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-              </li>
-            </ul>
+  </head>
+  <body>
+       <!-- NAVBAR -->
+       <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/influencer_dashboard"><i class="fas fa-chart-line me-2"></i><b>IESCP</b></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="/influencer_dashboard"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/find"><i class="fas fa-search me-1"></i>Find</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i>Stats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 full-height">
+      <div class="row page-header">
+        <div class="col-md-6">
+          <h2><i class="bi bi-search me-2"></i>Find Campaigns</h2>
+          <p class="text-muted">Discover and filter campaign opportunities</p>
+        </div>
+      </div>
+      
+      <!-- Search and Filters -->
+      <div class="row mb-4">
+        <div class="col-md-8">
+          <div class="input-group mb-3">
+            <span class="input-group-text bg-dark border-secondary">
+              <i class="bi bi-search"></i>
+            </span>
+            <input type="text" class="form-control search-bar" id="searchInput" placeholder="Search campaigns by name, niche or description...">
           </div>
         </div>
-      </nav>
+        <div class="col-md-4">
+          <div class="d-flex">
+            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#filterModal">
+              <i class="bi bi-funnel-fill me-2"></i>Filter by Niche
+            </button>
+          </div>
+        </div>
+      </div>
 
-    
-     
-    <div class="container">
-      <!-- Filter Button trigger modal -->
-
-<!-- Filter Modal -->
- <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#filterModal{{ i }}">Filter</button>
- <div class="modal fade" id="filterModal{{ i }}" tabindex="-1" aria-labelledby="filterModalLabel{{ i }}" aria-hidden="true">
-   <div class="modal-dialog">
-     <div class="modal-content">
-       <div class="modal-header">
-         <h5 class="modal-title" id="filterModalLabel{{ i }}">Select a Niche</h5>
-         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-       </div>
-       <div class="modal-body">
-         <form action="/filter" method="POST">
-           
-           <div class="form-group mb-3">
-             <label for="niche">Niche</label>
-             <select class="form-control" id="niche" name="niche" required>
-              <option value="" disabled selected>select a niche</option>
-               <option value="Travel">Travel</option>
-               <option value="Technology">Technology</option>
-               <option value="Fashion">Fashion</option>
-               <option value="Education">Education</option>
-             </select>
-           </div>
-           </div>
-           <div class="modal-footer">
-             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-             <button type="submit" class="btn btn-primary">Save changes</button>
-           </div>
-         </form>
-       </div>
-     </div>
-   </div>
- </div>
- <!-- End of Filter Modal -->
-        
-        
+      <!-- Filter Modal -->
+      <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="filterModalLabel">
+                <i class="bi bi-funnel-fill me-2"></i>Select a Niche
+              </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="/filter" method="POST" id="filterForm">
+                <div class="form-group mb-3">
+                  <label for="niche" class="form-label">Niche</label>
+                  <select class="form-select" id="niche" name="niche" required>
+                    <option value="" disabled selected>Select a niche</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Education">Education</option>
+                    <option value="all">All Niches</option>
+                  </select>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i>Close
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-2"></i>Apply Filter
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of Filter Modal -->
+      
+      <!-- Campaigns List -->
+      <div id="campaignsContainer">
         {% if campaigns %}
-        {% for i in range(campaigns|length)%}
-        <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">{{campaigns[i].campaign_name}}</h4>
-              <p class="card-text">Niche : {{campaigns[i].niche}}</p>
-              <!-- View modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">View</button>
-            <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">Campaign Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        {% for i in range(campaigns|length) %}
+        <div class="card campaign-card mb-4" data-campaign-name="{{ campaigns[i].campaign_name | lower }}" data-niche="{{ campaigns[i].niche | lower }}">
+          <div class="card-body">
+            <span class="badge badge-budget">{{ campaigns[i].budget }}</span>
+            <h4 class="card-title">{{ campaigns[i].campaign_name }}</h4>
+            <span class="campaign-tag">{{ campaigns[i].niche }}</span>
+            <p class="card-text campaign-description">{{ campaigns[i].campaign_description | truncate(100) }}</p>
+            
+            <div class="card-buttons">
+              <!-- View button -->
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">
+                <i class="bi bi-eye-fill btn-icon"></i>View Details
+              </button>
+              <!-- Send Ad request button -->
+              <button type="button" class="btn btn-secondary ms-2" data-bs-toggle="modal" data-bs-target="#adRequestModal{{ i }}">
+                <i class="bi bi-send-fill btn-icon"></i>Send Ad Request
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- View Campaign Modal -->
+        <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">
+                  <i class="bi bi-info-circle me-2"></i>Campaign Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-hash me-2"></i>Campaign ID</label>
+                  <input type="text" class="form-control" value="{{ campaigns[i].campaign_id }}" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-bookmark-fill me-2"></i>Campaign Name</label>
+                  <input type="text" class="form-control" value="{{ campaigns[i].campaign_name }}" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-tag-fill me-2"></i>Niche</label>
+                  <input type="text" class="form-control" value="{{ campaigns[i].niche }}" readonly>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-file-text-fill me-2"></i>Campaign Description</label>
+                  <textarea class="form-control" rows="4" readonly>{{ campaigns[i].campaign_description }}</textarea>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label"><i class="bi bi-cash me-2"></i>Budget</label>
+                  <input type="text" class="form-control campaign-budget" value="{{ campaigns[i].budget }}" readonly>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Send Ad Request Modal -->
+        <div class="modal fade" id="adRequestModal{{ i }}" tabindex="-1" aria-labelledby="adRequestModalLabel{{ i }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="adRequestModalLabel{{ i }}">
+                  <i class="bi bi-send-fill me-2"></i>Send Ad Request
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="/adrequest/send/{{ campaigns[i].sponsor_id }}" method="POST">
+                  <input type="hidden" name="campaign" value="{{ campaigns[i].campaign_id }}">
+                  
+                  <div class="alert alert-info">
+                    <small><i class="bi bi-info-circle-fill me-2"></i>You're sending a request for <strong>{{ campaigns[i].campaign_name }}</strong></small>
                   </div>
-                  <div class="modal-body">
-                    <label for="campaignId">Campaign Id</label>
-                    <input type="text" class="form-control mb-3" id="influencerId" value="{{ campaigns[i].campaign_id }}" readonly>
-                    <label for="campaignName">Campaign name</label>
-                    <input type="text" class="form-control mb-3" id="influencerName" value="{{ campaigns[i].campaign_name }}" readonly>
-                    <label for="niche">Niche</label>
-                    <input type="text" class="form-control mb-3" id="niche" value="{{campaigns[i].niche }}" readonly>
-                    <label for="campaignDescription">Campaign Description</label>
-                    <textarea class="form-control mb-3" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
-                    <label for="budget">Budget</label>
-                    <input type="text" class="form-control mb-3" id="followers" value="{{ campaigns[i].budget }}" readonly>
+                  
+                  <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-list-check me-2"></i>Your Requirements</label>
+                    <textarea class="form-control" id="adrequestDescription" name="adrequestDescription" rows="4" placeholder="Describe your proposal, content ideas, and requirements..." required></textarea>
                   </div>
+                  
+                  <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-currency-dollar me-2"></i>Payment Amount</label>
+                    <div class="input-group">
+                      <span class="input-group-text">$</span>
+                      <input type="number" class="form-control" id="amount" name="amount" placeholder="Enter your requested payment" required>
+                    </div>
+                  </div>
+                  
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                      <i class="bi bi-x-circle me-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="bi bi-send-fill me-2"></i>Send Request
+                    </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
-             <!-- End of view modal -->
-              <!-- Send Ad request Modal -->
-              <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#adRequestModal{{ i }}">Send Ad request</button>
-              <div class="modal fade" id="adRequestModal{{ i }}" tabindex="-1" aria-labelledby="adRequestModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="adRequestModalLabel{{ i }}">Enter Details</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form action="/adrequest/send/{{ campaigns[i].sponsor_id }}" method="POST">
-                        <div class="form-group mb-3">
-                          <input type="hidden" name="campaign" value="{{campaigns[i].campaign_id}}">
-                        </div>
-                        <div class="form-group mb-3">
-                          <label for="campaignDescription">Requirements</label>
-                          <textarea class="form-control" id="adrequestDescription" rows="3" name="adrequestDescription"></textarea>
-                        </div>
-                        
-                        <div class="form-group mb-3">
-                          <label for="amount">Payment amount</label>
-                          <input type="number" class="form-control" id="amount" name="amount" >
-                        </div>
-                       
-                        
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="submit" class="btn btn-primary">Send Ad request</button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- End of Send Ad request Modal -->
-            </div>
+          </div>
         </div>
         {% endfor %}
         {% else %}
-        <h6>No Campaigns available to show</h6>
+        <div class="no-campaigns">
+          <i class="bi bi-exclamation-circle display-4"></i>
+          <h4 class="mt-3">No Campaigns Available</h4>
+          <p class="text-muted">Try adjusting your search or check back later for new opportunities.</p>
+        </div>
         {% endif %}
-       
-        
-      
-    </div> 
+      </div>
+    </div>
     
+    <footer class="bg-dark text-center text-white-50 py-3 mt-5">
+      <div class="container">
+        <small>© 2025 Influencer and Esports Campaign Platform</small>
+      </div>
+    </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+      // Search functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const campaignCards = document.querySelectorAll('.campaign-card');
+        const noResultsMessage = document.createElement('div');
+        
+        noResultsMessage.className = 'no-campaigns';
+        noResultsMessage.innerHTML = `
+          <i class="bi bi-search display-4"></i>
+          <h4 class="mt-3">No Matching Campaigns</h4>
+          <p class="text-muted">Try adjusting your search terms or filters.</p>
+        `;
+        
+        // Filter campaigns based on search input
+        searchInput.addEventListener('input', function() {
+          const searchTerm = this.value.toLowerCase().trim();
+          let hasResults = false;
+          
+          campaignCards.forEach(card => {
+            const campaignName = card.getAttribute('data-campaign-name');
+            const campaignNiche = card.getAttribute('data-niche');
+            const campaignDescription = card.querySelector('.campaign-description').textContent.toLowerCase();
+            
+            if (campaignName.includes(searchTerm) || 
+                campaignNiche.includes(searchTerm) || 
+                campaignDescription.includes(searchTerm)) {
+              card.style.display = 'block';
+              hasResults = true;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          
+          // Show "no results" message if needed
+          const container = document.getElementById('campaignsContainer');
+          if (!hasResults) {
+            if (!document.querySelector('.no-campaigns')) {
+              container.appendChild(noResultsMessage);
+            }
+          } else {
+            const existingMessage = document.querySelector('.no-campaigns');
+            if (existingMessage) {
+              existingMessage.remove();
+            }
+          }
+        });
+        
+        // Filter form submission
+        const filterForm = document.getElementById('filterForm');
+        filterForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const selectedNiche = document.getElementById('niche').value;
+          const modal = bootstrap.Modal.getInstance(document.getElementById('filterModal'));
+          modal.hide();
+          
+          if (selectedNiche === 'all') {
+            campaignCards.forEach(card => {
+              card.style.display = 'block';
+            });
+            return;
+          }
+          
+          let hasResults = false;
+          campaignCards.forEach(card => {
+            const campaignNiche = card.getAttribute('data-niche');
+            
+            if (campaignNiche === selectedNiche.toLowerCase()) {
+              card.style.display = 'block';
+              hasResults = true;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          
+          // Show "no results" message if needed
+          const container = document.getElementById('campaignsContainer');
+          if (!hasResults) {
+            if (!document.querySelector('.no-campaigns')) {
+              container.appendChild(noResultsMessage.cloneNode(true));
+            }
+          } else {
+            const existingMessage = document.querySelector('.no-campaigns');
+            if (existingMessage) {
+              existingMessage.remove();
+            }
+          }
+        });
+      });
+    </script>
   </body>
 </html>

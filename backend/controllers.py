@@ -3,7 +3,7 @@ from flask import current_app as app
 from backend.models import Users, Campaign, db,AdRequest,Flagged
 from dateutil import parser
 from sqlalchemy import or_
-
+import backend.init_db
 app.secret_key = 'iescp'
 
 @app.route("/admin_dashboard")
@@ -35,6 +35,7 @@ def influencer_dashboard():
             incoming_requests = fetch_ad_requests_by_target(usr['user_id'])
             outgoing_requests = fetch_ad_requests_by_source(usr['user_id'])
             ad_request_details = fetch_ad_requests_details()
+            completed = fetch_completed_ad_requests(usr['user_id'])
             targets = fetch_target_details()
             sources = fetch_source_details()
             personal_info = fetch_influencer_details(usr['user_id'])
@@ -42,7 +43,8 @@ def influencer_dashboard():
                                    campaigns=campaigns,
                                    incoming_requests=incoming_requests,
                                    outgoing_requests=outgoing_requests,ad=ad_request_details,
-                                   targets=targets,info=personal_info,sources=sources)
+                                   targets=targets,info=personal_info,sources=sources,
+                                   completed=completed)
     return "<h1>Unauthorized Access</h1>"
 def fetch_influencer_details(user_id):
     personal_info = Users.query.filter_by(user_id=user_id).first()
@@ -236,7 +238,9 @@ def fetch_private_campaigns(user_id):
 def fetch_ad_requests_by_source(source_id):
     return AdRequest.query.filter_by(source=source_id).all()
 def fetch_ad_requests_by_target(target_id):
-    return AdRequest.query.filter_by(target= target_id).all()
+    return AdRequest.query.filter_by(target= target_id).filter(AdRequest.status!="completed").all()
+def fetch_completed_ad_requests(target_id):
+    return AdRequest.query.filter_by(target=target_id).filter_by(status="completed").all()
 def fetch_ad_requests_details():
     ad_request = AdRequest.query.all()
     d = {}
@@ -275,6 +279,18 @@ def edit_ad_request(adrequest_id):
         return redirect(url_for("influencer_dashboard"))
     elif usr['role'] == 2:
         return redirect(url_for("sponsor_dashboard"))
+@app.route('/payment/adrequest/<adrequest_id>',methods=["GET","POST"])
+def confirm_payment(adrequest_id):
+    ad_request = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
+    if request.method == "POST":
+        ad_request.payment_status="Completed"
+        db.session.commit()
+        usr = session['user']
+        if usr['role'] == 1:
+            return redirect(url_for("influencer_dashboard"))
+        elif usr['role'] == 2:
+            return redirect(url_for("sponsor_dashboard"))
+
     
 @app.route('/delete/adrequest/<adrequest_id>',methods=["GET","POST"])
 def delete_ad_request(adrequest_id):
@@ -285,10 +301,37 @@ def delete_ad_request(adrequest_id):
         return redirect(url_for("influencer_dashboard"))
     elif usr['role'] == 2:
         return redirect(url_for("sponsor_dashboard"))
+@app.route('/review/adrequest/<adrequest_id>',methods=["GET","POST"])
+def review_ad_request(adrequest_id):
+    ad_request = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
+    if request.method == "POST":
+        review = request.form.get("review")
+        print(review)
+        ad_request.review=review
+        db.session.commit()
+        usr = session['user']
+        if usr['role'] == 1:
+            return redirect(url_for("influencer_dashboard"))
+        elif usr['role'] == 2:
+            return redirect(url_for("sponsor_dashboard"))
 @app.route('/accept/adrequest/<adrequest_id>',methods=["GET","POST"])
 def accept_ad_request(adrequest_id):
     ad_request = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
+    campaign = Campaign.query.filter_by(campaign_id = ad_request.campaign_id).first()
     ad_request.status = 'accepted'
+    campaign.status = 'assigned'
+    db.session.commit()
+    usr = session['user']
+    if usr['role'] == 1:
+        return redirect(url_for("influencer_dashboard"))
+    elif usr['role'] == 2:
+        return redirect(url_for("sponsor_dashboard"))
+@app.route('/complete/adrequest/<adrequest_id>',methods=["GET","POST"])
+def complete_ad_request(adrequest_id):
+    ad_request = AdRequest.query.filter_by(adrequest_id=adrequest_id).first()
+    ad_request.status = "completed"
+    campaign = Campaign.query.filter_by(campaign_id = ad_request.campaign_id).first()
+    campaign.status = 'pending'
     db.session.commit()
     usr = session['user']
     if usr['role'] == 1:

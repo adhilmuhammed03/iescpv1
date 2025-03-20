@@ -42,6 +42,7 @@ class AdRequest(db.Model):
     status = db.Column(db.String, nullable=False, default='Pending')
     payment_status = db.Column(db.String, nullable=False, default="Pending")
     amount = db.Column(db.Integer)
+    review = db.Column(db.String)
     requirements = db.Column(db.String, nullable=False)
     usr_source = db.relationship("Users", foreign_keys=[source], back_populates="ad_requests_source")
     usr_target = db.relationship("Users", foreign_keys=[target], back_populates="ad_requests_target")

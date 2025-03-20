@@ -1,199 +1,546 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Find</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
         .full-height{
             height: 75vh;
         }
-        .bg-form {
-            background-color: #eeeee4;
+        
+        .navbar {
+            background-color: #1e1e1e !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+        }
+        
+        .card {
+            background-color: #2d2d2d;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: #ffffff;
+            font-weight: bold;
+        }
+        
+        .card-text {
+            color: #b3b3b3;
+        }
+        
+        .btn-primary {
+            background-color: #4361ee;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a56d4;
+        }
+        
+        .btn-danger {
+            background-color: #e63946;
+            border: none;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d62b39;
+        }
+        
+        .btn-secondary {
+            background-color: #4f4f4f;
+            border: none;
+        }
+        
+        .section-header {
+            border-left: 4px solid #4361ee;
+            padding-left: 10px;
+            margin: 30px 0 20px 0;
+        }
+        
+        .search-container {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .modal-content {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #444;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #444;
+        }
+        
+        .form-control {
+            background-color: #3d3d3d;
+            border: 1px solid #555;
+            color: #e0e0e0;
+        }
+        
+        .form-control:focus {
+            background-color: #454545;
+            color: #ffffff;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .form-control:read-only {
+            background-color: #353535;
+        }
+        
+        .badge {
+            font-size: 0.85rem;
+            padding: 5px 10px;
+        }
+        
+        .user-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .user-info {
+            flex-grow: 1;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .search-tabs {
+            margin-bottom: 15px;
+        }
+        
+        .no-results {
+            background-color: #2d2d2d;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
-</head>
-  <body class="bg-form">
-<!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/admin_dashboard"><b>IESCP</b></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/admin_dashboard">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/find">Find</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Stats</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-    
-     
+  </head>
+  <body>
+    <!-- NAVBAR -->
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
-        <form class="form-inline d-flex col-lg-3">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        
-        <h4>All Campaigns : </h4>
-        {% if campaigns %}
-      <div class="row">
-        {% for i in range(campaigns|length) %}
-        <div class="col-md-4">
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">{{ campaigns[i].campaign_name }}</h5>
-              <p class="card-text">{{ campaigns[i].campaign_description }}</p>
-              <p>Budget: <span>{{ campaigns[i].budget }}</span></p>
-  
-              <!-- View Modal -->
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">View</button>
-              <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">Campaign Details</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <label for="campaignId">Campaign Id</label>
-                      <input type="text" class="form-control mb-3" id="campaignId" value="{{ campaigns[i].campaign_id }}" readonly>
-                      <label for="campaignName">Campaign name</label>
-                      <input type="text" class="form-control mb-3" id="campaignName" value="{{ campaigns[i].campaign_name }}" readonly>
-                      <label for="campaignDescription">Campaign Description</label>
-                      <textarea class="form-control mb-3" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
-                      <label for="startDate">Start Date</label>
-                      <input type="text" class="form-control mb-3" id="startDate" value="{{ campaigns[i].start_date }}" readonly>
-                      <label for="endDate">End Date</label>
-                      <input type="text" class="form-control mb-3" id="endDate" value="{{ campaigns[i].end_date }}" readonly>
-                      <label for="budget">Budget</label>
-                      <input type="text" class="form-control mb-3" id="budget" value="{{ campaigns[i].budget }}" readonly>
-                      <label for="niche">Niche</label>
-                      <input type="text" class="form-control mb-3" id="niche" value="{{ campaigns[i].niche }}" readonly>
-                      <label for="visibility">Visibility (0 -> Public, 1 -> Private)</label>
-                      <input type="text" class="form-control mb-3" id="visibility" value="{{ campaigns[i].visibility }}" readonly>
-                      <label for="status">Status (0 -> Not Assigned, 1 -> Assigned)</label>
-                      <input type="text" class="form-control mb-3" id="status" value="{{ campaigns[i].status }}" readonly>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- End of View Modal -->
-  
-              <!-- Flag Modal -->
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#flagCampaignModal{{ i }}">Flag</button>
-              <div class="modal fade" id="flagCampaignModal{{ i }}" tabindex="-1" aria-labelledby="flagCampaignModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="FlagCampaignModalLabel{{ i }}">Are you sure you want to flag this campaign?</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <a href="/flag/campaign/{{ campaigns[i].campaign_id }}" class="btn btn-danger">Flag</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- End of Flag Modal -->
-  
-            </div>
-          </div>
+        <a class="navbar-brand" href="/admin_dashboard"><i class="fas fa-chart-line me-2"></i><b>IESCP</b></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/admin_dashboard"><i class="fas fa-home me-1"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/find"><i class="fas fa-search me-1"></i>Find</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i>Stats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                </li>
+            </ul>
         </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <h6>No Ongoing campaigns</h6>
-      {% endif %}
+    </div>
+</nav>
 
-
-
-
-    <h4>All users : </h4>
-
-
-       
-      {% if users %}
-      {% for i in range(users|length) %}
-      <div class="card">
-          <div class="card-body">
-            {{users[i].name}}
-            <p class="card-text">Role : {% if users[i].role == 1 %}User {% else %} Sponsor {% endif %}</p>
-            <!-- View modal -->
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewUserModal{{ i }}">View</button>
-          <div class="modal fade" id="viewUserModal{{ i }}" tabindex="-1" aria-labelledby="viewUserModalLabel{{ i }}" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="viewUserModalLabel{{ i }}">User Details</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <label for="UserId">User Id</label>
-                  <input type="text" class="form-control mb-3" id="UserId" value="{{ users[i].user_id }}" readonly>
-                  <label for="UserName">User name</label>
-                  <input type="text" class="form-control mb-3" id="UserName" value="{{ users[i].name }}" readonly>
-                  <label for="niche">Niche</label>
-                  <input type="text" class="form-control mb-3" id="niche" value="{{users[i].niche }}" readonly>
-                  <label for="platform">Platform</label>
-                  <input type="text" class="form-control mb-3" id="platform" value="{{ users[i].platform }}" readonly>
-                  <label for="followers">No of followers</label>
-                  <input type="text" class="form-control mb-3" id="followers" value="{{ users[i].followers }}" readonly>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-              </div>
+    <div class="container">
+        <!-- Search section -->
+        <div class="search-container">
+            <div class="search-tabs mb-3">
+                <ul class="nav nav-pills" id="searchTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">All</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="campaigns-tab" data-bs-toggle="pill" data-bs-target="#campaigns" type="button" role="tab" aria-controls="campaigns" aria-selected="false">Campaigns</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="users-tab" data-bs-toggle="pill" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="false">Users</button>
+                    </li>
+                </ul>
             </div>
-          </div>
-           <!-- End of view modal -->
-           <!-- Flag Modal -->
-           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#flagUserModal{{ i }}">Flag</button>
-           <div class="modal fade" id="flagUserModal{{ i }}" tabindex="-1" aria-labelledby="flagUserModalLabel{{ i }}" aria-hidden="true">
-             <div class="modal-dialog">
-               <div class="modal-content">
-                 <div class="modal-header">
-                   <h5 class="modal-title" id="FlagUserModalLabel{{ i }}">Are you sure you want to flag this User?</h5>
-                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                 </div>
-                 <div class="modal-body">
-                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                   <a href="/flag/user/{{ users[i].user_id }}" class="btn btn-danger">Flag</a>
-                 </div>
-               </div>
-             </div>
-           </div>
-           <!-- End of Flag Modal -->
-          
-      </div>
-      {% endfor %}
-      {% else %}
-      <h6>No Users available to show</h6>
-      {% endif %}
+            <form id="searchForm" onsubmit="return searchItems()">
+                <div class="input-group mb-3">
+                    <input id="searchInput" class="form-control" type="search" placeholder="Search campaigns, users or niches..." aria-label="Search">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search me-2"></i>Search</button>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" id="clearSearch" class="btn btn-secondary btn-sm" onclick="clearSearch()">
+                        <i class="fas fa-times me-2"></i>Clear Search
+                    </button>
+                </div>
+            </form>
+        </div>
         
-    
-      
-    </div> 
-    
+        <!-- Campaigns section -->
+        <div id="campaignsSection">
+            <h4 class="section-header">All Campaigns</h4>
+            <div id="campaignsNoResults" class="no-results hidden">
+                <i class="fas fa-search me-2"></i> No campaigns match your search.
+            </div>
+            {% if campaigns %}
+            <div class="row" id="campaignsContainer">
+                {% for i in range(campaigns|length) %}
+                <div class="col-md-4 campaign-item" data-campaign-name="{{ campaigns[i].campaign_name.lower() if campaigns[i].campaign_name else '' }}" data-niche="{{ campaigns[i].niche.lower() if campaigns[i].niche else '' }}">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ campaigns[i].campaign_name }}</h5>
+                            <p class="card-text">{{ campaigns[i].campaign_description }}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-info text-dark">Budget: ${{ campaigns[i].budget }}</span>
+                                {% if campaigns[i].status == 0 %}
+                                    <span class="badge bg-warning">Not Assigned</span>
+                                {% else %}
+                                    <span class="badge bg-success">Assigned</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <!-- View Button -->
+                                <button type="button" class="btn btn-primary flex-grow-1" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">
+                                    <i class="fas fa-eye me-2"></i>View
+                                </button>
+                                
+                                <!-- Flag Button -->
+                                <button type="button" class="btn btn-danger flex-grow-1" data-bs-toggle="modal" data-bs-target="#flagCampaignModal{{ i }}">
+                                    <i class="fas fa-flag me-2"></i>Flag
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- View Modal -->
+                <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">Campaign Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="campaignId" class="form-label">Campaign Id</label>
+                                    <input type="text" class="form-control" id="campaignId" value="{{ campaigns[i].campaign_id }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="campaignName" class="form-label">Campaign Name</label>
+                                    <input type="text" class="form-control" id="campaignName" value="{{ campaigns[i].campaign_name }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="campaignDescription" class="form-label">Campaign Description</label>
+                                    <textarea class="form-control" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="startDate" class="form-label">Start Date</label>
+                                        <input type="text" class="form-control" id="startDate" value="{{ campaigns[i].start_date }}" readonly>
+                                    </div>
+                                    <div class="col">
+                                        <label for="endDate" class="form-label">End Date</label>
+                                        <input type="text" class="form-control" id="endDate" value="{{ campaigns[i].end_date }}" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="budget" class="form-label">Budget</label>
+                                    <input type="text" class="form-control" id="budget" value="{{ campaigns[i].budget }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="niche" class="form-label">Niche</label>
+                                    <input type="text" class="form-control" id="niche" value="{{ campaigns[i].niche }}" readonly>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col">
+                                        <label for="visibility" class="form-label">Visibility</label>
+                                        <input type="text" class="form-control" id="visibility" value="{% if campaigns[i].visibility == 0 %}Public{% else %}Private{% endif %}" readonly>
+                                    </div>
+                                    <div class="col">
+                                        <label for="status" class="form-label">Status</label>
+                                        <input type="text" class="form-control" id="status" value="{% if campaigns[i].status == 0 %}Not Assigned{% else %}Assigned{% endif %}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of View Modal -->
+                
+                <!-- Flag Modal -->
+                <div class="modal fade" id="flagCampaignModal{{ i }}" tabindex="-1" aria-labelledby="flagCampaignModalLabel{{ i }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="FlagCampaignModalLabel{{ i }}">Are you sure you want to flag this campaign?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>You are about to flag the campaign: <strong>{{ campaigns[i].campaign_name }}</strong></p>
+                                <p>This action cannot be undone. Are you sure you want to continue?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="/flag/campaign/{{ campaigns[i].campaign_id }}" class="btn btn-danger"><i class="fas fa-flag me-2"></i>Flag Campaign</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Flag Modal -->
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i> No ongoing campaigns at the moment.
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Users section -->
+        <div id="usersSection">
+            <h4 class="section-header">All Users</h4>
+            <div id="usersNoResults" class="no-results hidden">
+                <i class="fas fa-search me-2"></i> No users match your search.
+            </div>
+            {% if users %}
+            <div class="row" id="usersContainer">
+                {% for i in range(users|length) %}
+                <div class="col-md-6 user-item" data-user-name="{{ users[i].name.lower() if users[i].name else '' }}" data-niche="{{ users[i].niche.lower() if users[i].niche else '' }}" data-platform="{{ users[i].platform.lower() if users[i].platform else '' }}">
+                    <div class="card user-card">
+                        <div class="user-info">
+                            <h5>{{users[i].name}}</h5>
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="badge {% if users[i].role == 1 %}bg-primary{% else %}bg-success{% endif %}">
+                                    {% if users[i].role == 1 %}User{% else %}Sponsor{% endif %}
+                                </span>
+                                <span class="badge bg-secondary">{{users[i].platform}}</span>
+                                <span class="badge bg-info text-dark">{{users[i].followers}} followers</span>
+                            </div>
+                            <p class="text-muted mb-0">Niche: {{users[i].niche}}</p>
+                        </div>
+                        <div class="user-actions">
+                            <!-- View Button -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewUserModal{{ i }}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            
+                            <!-- Flag Button -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#flagUserModal{{ i }}">
+                                <i class="fas fa-flag"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- View User Modal -->
+                <div class="modal fade" id="viewUserModal{{ i }}" tabindex="-1" aria-labelledby="viewUserModalLabel{{ i }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="viewUserModalLabel{{ i }}">User Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="UserId" class="form-label">User Id</label>
+                                    <input type="text" class="form-control" id="UserId" value="{{ users[i].user_id }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="UserName" class="form-label">User Name</label>
+                                    <input type="text" class="form-control" id="UserName" value="{{ users[i].name }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="role" class="form-label">Role</label>
+                                    <input type="text" class="form-control" id="role" value="{% if users[i].role == 1 %}User{% else %}Sponsor{% endif %}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="niche" class="form-label">Niche</label>
+                                    <input type="text" class="form-control" id="niche" value="{{users[i].niche }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="platform" class="form-label">Platform</label>
+                                    <input type="text" class="form-control" id="platform" value="{{ users[i].platform }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="followers" class="form-label">Followers</label>
+                                    <input type="text" class="form-control" id="followers" value="{{ users[i].followers }}" readonly>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of View Modal -->
+                
+                <!-- Flag User Modal -->
+                <div class="modal fade" id="flagUserModal{{ i }}" tabindex="-1" aria-labelledby="flagUserModalLabel{{ i }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="FlagUserModalLabel{{ i }}">Are you sure you want to flag this user?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>You are about to flag the user: <strong>{{ users[i].name }}</strong></p>
+                                <p>This action cannot be undone. Are you sure you want to continue?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <a href="/flag/user/{{ users[i].user_id }}" class="btn btn-danger"><i class="fas fa-flag me-2"></i>Flag User</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Flag Modal -->
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i> No users available to show.
+            </div>
+            {% endif %}
+        </div>
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+    <script>
+        // Search functionality
+        function searchItems() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const activeTab = document.querySelector('#searchTabs .nav-link.active').id;
+            
+            // Show the clear search button if we have a search term
+            document.getElementById('clearSearch').style.display = searchTerm ? 'block' : 'none';
+            
+            // Handle campaign search
+            if (activeTab === 'all-tab' || activeTab === 'campaigns-tab') {
+                const campaignItems = document.querySelectorAll('.campaign-item');
+                let campaignsFound = false;
+                
+                campaignItems.forEach(item => {
+                    const campaignName = item.getAttribute('data-campaign-name');
+                    const niche = item.getAttribute('data-niche');
+                    
+                    if (searchTerm === '' || 
+                        campaignName.includes(searchTerm) || 
+                        niche.includes(searchTerm)) {
+                        item.classList.remove('hidden');
+                        campaignsFound = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+                
+                // Show/hide no results message for campaigns
+                document.getElementById('campaignsNoResults').classList.toggle('hidden', campaignsFound || searchTerm === '');
+            }
+            
+            // Handle user search
+            if (activeTab === 'all-tab' || activeTab === 'users-tab') {
+                const userItems = document.querySelectorAll('.user-item');
+                let usersFound = false;
+                
+                userItems.forEach(item => {
+                    const userName = item.getAttribute('data-user-name');
+                    const niche = item.getAttribute('data-niche');
+                    const platform = item.getAttribute('data-platform');
+                    
+                    if (searchTerm === '' || 
+                        userName.includes(searchTerm) || 
+                        niche.includes(searchTerm) ||
+                        platform.includes(searchTerm)) {
+                        item.classList.remove('hidden');
+                        usersFound = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+                
+                // Show/hide no results message for users
+                document.getElementById('usersNoResults').classList.toggle('hidden', usersFound || searchTerm === '');
+            }
+            
+            // Handle tab visibility based on search context
+            if (activeTab === 'campaigns-tab') {
+                document.getElementById('usersSection').classList.add('hidden');
+                document.getElementById('campaignsSection').classList.remove('hidden');
+            } else if (activeTab === 'users-tab') {
+                document.getElementById('campaignsSection').classList.add('hidden');
+                document.getElementById('usersSection').classList.remove('hidden');
+            } else {
+                // All tab
+                document.getElementById('campaignsSection').classList.remove('hidden');
+                document.getElementById('usersSection').classList.remove('hidden');
+            }
+            
+            return false; // Prevent form submission
+        }
+        
+        // Clear search function
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearSearch').style.display = 'none';
+            
+            // Reset all items
+            document.querySelectorAll('.campaign-item, .user-item').forEach(item => {
+                item.classList.remove('hidden');
+            });
+            
+            // Hide no results messages
+            document.getElementById('campaignsNoResults').classList.add('hidden');
+            document.getElementById('usersNoResults').classList.add('hidden');
+        }
+        
+        // Initialize tabs
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up tab change listeners
+            document.querySelectorAll('#searchTabs .nav-link').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Run search on tab change to update visibility
+                    searchItems();
+                });
+            });
+            
+            // Initialize clear search button visibility
+            document.getElementById('clearSearch').style.display = 'none';
+        });
+    </script>
   </body>
 </html>

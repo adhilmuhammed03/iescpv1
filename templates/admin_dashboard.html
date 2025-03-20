@@ -1,258 +1,471 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .full-height{
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        
+        .full-height {
             height: 75vh;
         }
-        .bg-form {
-            background-color: #eeeee4;
+        
+        .navbar {
+            background-color: #1e1e1e !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card {
+            background-color: #1e1e1e;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-title {
+            color: #0d6efd;
+        }
+        
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        
+        .modal-content {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid #333;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid #333;
+        }
+        
+        .form-control {
+            background-color: #2c2c2c;
+            border: 1px solid #333;
+            color: #e0e0e0;
+        }
+        
+        .form-control:focus {
+            background-color: #2c2c2c;
+            color: #e0e0e0;
+        }
+        
+        .form-control:read-only {
+            background-color: #252525;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+        }
+        
+        .dashboard-container {
+            padding: 20px;
         }
     </style>
-</head>
-  <body class="bg-form">
-<!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary ">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/admin_dashboard"><b>IESCP</b></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/admin_dashboard">Dashboard</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/find">Find</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Stats</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/logout">Logout</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-    <div class="container">
-      <h4>Welcome {{ usr.name }}</h4>
-      <h4>Ongoing campaigns : </h4>
-
-      <!-- Ongoing campaigns -->
-      {% if campaigns %}
-      <div class="row">
-        {% for i in range(campaigns|length) %}
-        <div class="col-md-4">
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">{{ campaigns[i].campaign_name }}</h5>
-              <p class="card-text">{{ campaigns[i].campaign_description }}</p>
-              <p>Budget: <span>{{ campaigns[i].budget }}</span></p>
-  
-              <!-- View Modal -->
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">View</button>
-              <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">Campaign Details</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <label for="campaignId">Campaign Id</label>
-                      <input type="text" class="form-control mb-3" id="campaignId" value="{{ campaigns[i].campaign_id }}" readonly>
-                      <label for="campaignName">Campaign name</label>
-                      <input type="text" class="form-control mb-3" id="campaignName" value="{{ campaigns[i].campaign_name }}" readonly>
-                      <label for="campaignDescription">Campaign Description</label>
-                      <textarea class="form-control mb-3" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
-                      <label for="startDate">Start Date</label>
-                      <input type="text" class="form-control mb-3" id="startDate" value="{{ campaigns[i].start_date }}" readonly>
-                      <label for="endDate">End Date</label>
-                      <input type="text" class="form-control mb-3" id="endDate" value="{{ campaigns[i].end_date }}" readonly>
-                      <label for="budget">Budget</label>
-                      <input type="text" class="form-control mb-3" id="budget" value="{{ campaigns[i].budget }}" readonly>
-                      <label for="niche">Niche</label>
-                      <input type="text" class="form-control mb-3" id="niche" value="{{ campaigns[i].niche }}" readonly>
-                      <label for="visibility">Visibility (0 -> Public, 1 -> Private)</label>
-                      <input type="text" class="form-control mb-3" id="visibility" value="{{ campaigns[i].visibility }}" readonly>
-                      <label for="status">Status (0 -> Not Assigned, 1 -> Assigned)</label>
-                      <input type="text" class="form-control mb-3" id="status" value="{{ campaigns[i].status }}" readonly>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                  </div>
+  </head>
+  <body>
+         <!-- NAVBAR -->
+         <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+            <div class="container">
+                <a class="navbar-brand" href="/admin_dashboard"><i class="fas fa-chart-line me-2"></i><b>IESCP</b></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/admin_dashboard"><i class="fas fa-home me-1"></i>Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/find"><i class="fas fa-search me-1"></i>Find</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-chart-bar me-1"></i>Stats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+                        </li>
+                    </ul>
                 </div>
-              </div>
-              <!-- End of View Modal -->
-  
-              <!-- Delete Modal -->
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal{{ i }}">Delete</button>
-              <div class="modal fade" id="deleteCampaignModal{{ i }}" tabindex="-1" aria-labelledby="deleteCampaignModalLabel{{ i }}" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="deleteCampaignModalLabel{{ i }}">Are you sure you want to delete this campaign?</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <a href="/delete/campaign/{{ campaigns[i].campaign_id }}" class="btn btn-danger">Delete</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- End of Delete Modal -->
-  
             </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <h6>No Ongoing campaigns</h6>
-      {% endif %}
-      
+        </nav>
+    
 
-      <h4>Flagged Users :</h4>
-      <!-- Flagged Users or campaigns -->
-       {% if flagged_users %}
-      <div class="d-flex">
-        {% for flag in flagged_users %}
-        <div class="card" style="width: 18rem; margin-right: 10px;">
-          <div class="card-body">
-            <h5 class="card-title">User Name : {{flag.name}}</h5>
-            <!-- View modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#flaggedUser">View</button>
-            <div class="modal fade" id="flaggedUser" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="viewUserModalLabel">User Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <label for="UserId">User Id</label>
-                    <input type="text" class="form-control mb-3" id="userId" value="{{ flag.user_id }}" readonly>
-                    <label for="userName">User name</label>
-                    <input type="text" class="form-control mb-3" id="userName" value="{{ flag.name }}" readonly>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  </div>
+    <div class="container dashboard-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="bi bi-person-circle me-2"></i>Welcome {{ usr.name }}</h3>
+        </div>
+        
+        <!-- Ongoing campaigns -->
+        <h4 class="section-title"><i class="bi bi-megaphone me-2"></i>Ongoing Campaigns</h4>
+        
+        {% if campaigns %}
+        <div class="row">
+            {% for i in range(campaigns|length) %}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ campaigns[i].campaign_name }}</h5>
+                        <p class="card-text text-muted">{{ campaigns[i].campaign_description }}</p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-info text-dark">Budget: ${{ campaigns[i].budget }}</span>
+                            {% if campaigns[i].status == 0 %}
+                                <span class="badge bg-warning">Not Assigned</span>
+                            {% else %}
+                                <span class="badge bg-success">Assigned</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <!-- View Modal Button -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ i }}">
+                                <i class="bi bi-eye me-1"></i> View
+                            </button>
+                            
+                            <!-- Delete Modal Button -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal{{ i }}">
+                                <i class="bi bi-trash me-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-             <!-- End of view modal -->
-              <!-- Remove Modal -->
-              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeUserModal">Remove</button>
-              <div class="modal fade" id="removeUserModal" tabindex="-1" aria-labelledby="removeUserModalLabel" aria-hidden="true">
+            
+            <!-- View Modal -->
+            <div class="modal fade" id="viewCampaignModal{{ i }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ i }}" aria-hidden="true">
                 <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="removeUserModalLabel">Are you sure you want to remove this user ? </h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewCampaignModalLabel{{ i }}">
+                                <i class="bi bi-info-circle me-2"></i>Campaign Details
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="campaignId" class="form-label">Campaign ID</label>
+                                <input type="text" class="form-control" id="campaignId" value="{{ campaigns[i].campaign_id }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campaignName" class="form-label">Campaign Name</label>
+                                <input type="text" class="form-control" id="campaignName" value="{{ campaigns[i].campaign_name }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campaignDescription" class="form-label">Campaign Description</label>
+                                <textarea class="form-control" id="campaignDescription" rows="3" readonly>{{ campaigns[i].campaign_description }}</textarea>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="text" class="form-control" id="startDate" value="{{ campaigns[i].start_date }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="text" class="form-control" id="endDate" value="{{ campaigns[i].end_date }}" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Budget</label>
+                                <input type="text" class="form-control" id="budget" value="{{ campaigns[i].budget }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="niche" class="form-label">Niche</label>
+                                <input type="text" class="form-control" id="niche" value="{{ campaigns[i].niche }}" readonly>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="visibility" class="form-label">Visibility</label>
+                                    <input type="text" class="form-control" id="visibility" value="{{ 'Private' if campaigns[i].visibility == 1 else 'Public' }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status</label>
+                                    <input type="text" class="form-control" id="status" value="{{ 'Assigned' if campaigns[i].status == 1 else 'Not Assigned' }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <a href="/remove/user/{{ flag.user_id }}" class="btn btn-danger">Remove</a>
+                </div>
+            </div>
+            <!-- End of View Modal -->
+            
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteCampaignModal{{ i }}" tabindex="-1" aria-labelledby="deleteCampaignModalLabel{{ i }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteCampaignModalLabel{{ i }}">
+                                <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Delete Campaign
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete the campaign "<strong>{{ campaigns[i].campaign_name }}</strong>"?</p>
+                            <p class="text-danger"><small>This action cannot be undone.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="/delete/campaign/{{ campaigns[i].campaign_id }}" class="btn btn-danger">Delete</a>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <!-- End of Remove Modal -->
-            <a href="/ignore/{{flag.user_id}}" class="btn btn-secondary">Ignore</a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <h6>No flagged users </h6>
-      {% endif %}
-
-
-
-
-      <h4>Flagged Campaigns :</h4>
-      <!-- Flagged Users or campaigns -->
-       {% if flagged_campaigns %}
-      <div class="d-flex">
-        {% for flag in flagged_campaigns %}
-        <div class="card" style="width: 18rem; margin-right: 10px;">
-          <div class="card-body">
-            <h5 class="card-title">Campaign name : {{flag.campaign_name}}</h5>
-
-             <!-- View Modal -->
-             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewCampaignModal">View</button>
-             <div class="modal fade" id="viewCampaignModal" tabindex="-1" aria-labelledby="viewCampaignModalLabel" aria-hidden="true">
-               <div class="modal-dialog">
-                 <div class="modal-content">
-                   <div class="modal-header">
-                     <h5 class="modal-title" id="viewCampaignModalLabel">Campaign Details</h5>
-                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                   </div>
-                   <div class="modal-body">
-                     <label for="campaignId">Campaign Id</label>
-                     <input type="text" class="form-control mb-3" id="campaignId" value="{{ flag.campaign_id }}" readonly>
-                     <label for="campaignName">Campaign name</label>
-                     <input type="text" class="form-control mb-3" id="campaignName" value="{{ flag.campaign_name }}" readonly>
-                     <label for="campaignDescription">Campaign Description</label>
-                     <textarea class="form-control mb-3" id="campaignDescription" rows="3" readonly>{{ flag.campaign_description }}</textarea>
-                     <label for="startDate">Start Date</label>
-                     <input type="text" class="form-control mb-3" id="startDate" value="{{ flag.start_date }}" readonly>
-                     <label for="endDate">End Date</label>
-                     <input type="text" class="form-control mb-3" id="endDate" value="{{ flag.end_date }}" readonly>
-                     <label for="budget">Budget</label>
-                     <input type="text" class="form-control mb-3" id="budget" value="{{ flag.budget }}" readonly>
-                     <label for="niche">Niche</label>
-                     <input type="text" class="form-control mb-3" id="niche" value="{{ flag.niche }}" readonly>
-                     <label for="visibility">Visibility (0 -> Public, 1 -> Private)</label>
-                     <input type="text" class="form-control mb-3" id="visibility" value="{{ flag.visibility }}" readonly>
-                     <label for="status">Status (0 -> Not Assigned, 1 -> Assigned)</label>
-                     <input type="text" class="form-control mb-3" id="status" value="{{ flag.status }}" readonly>
-                   </div>
-                   <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                   </div>
-                 </div>
-               </div>
-             </div>
-             <!-- End of View Modal -->
-            <!-- Remove Modal -->
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeCampaignModal">Remove</button>
-            <div class="modal fade" id="removeCampaignModal" tabindex="-1" aria-labelledby="removeCampaignModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="removeCampaignModalLabel">Are you sure you want to remove this Campaign ? </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <a href="/remove/campaign/{{ flag.campaign_id }}" class="btn btn-danger">Remove</a>
-                  </div>
-                </div>
-              </div>
             </div>
             <!-- End of Delete Modal -->
-            <a href="/ignore/{{flag.campaign_id}}" class="btn btn-secondary">Ignore</a>
-          </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-      </div>
-      {% else %}
-      <h6>No flagged users </h6>
-      {% endif %}
-      
-      
-    </div> 
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            <i class="bi bi-info-circle me-2"></i>No ongoing campaigns at the moment.
+        </div>
+        {% endif %}
+
+        <!-- Flagged Users -->
+        <h4 class="section-title"><i class="bi bi-flag-fill me-2 text-warning"></i>Flagged Users</h4>
+        
+        {% if flagged_users %}
+        <div class="row">
+            {% for flag in flagged_users %}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ flag.name }}</h5>
+                        <span class="badge bg-warning mb-3">Flagged User</span>
+                        
+                        <div class="d-flex gap-2">
+                            <!-- View Modal Button -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#flaggedUserModal{{ flag.user_id }}">
+                                <i class="bi bi-eye me-1"></i> View
+                            </button>
+                            
+                            <!-- Remove Modal Button -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeUserModal{{ flag.user_id }}">
+                                <i class="bi bi-person-x me-1"></i> Remove
+                            </button>
+                            
+                            <a href="/ignore/{{ flag.user_id }}" class="btn btn-secondary">
+                                <i class="bi bi-check-circle me-1"></i> Ignore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- View User Modal -->
+            <div class="modal fade" id="flaggedUserModal{{ flag.user_id }}" tabindex="-1" aria-labelledby="viewUserModalLabel{{ flag.user_id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewUserModalLabel{{ flag.user_id }}">
+                                <i class="bi bi-person me-2"></i>User Details
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="userId" class="form-label">User ID</label>
+                                <input type="text" class="form-control" id="userId" value="{{ flag.user_id }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="userName" class="form-label">User Name</label>
+                                <input type="text" class="form-control" id="userName" value="{{ flag.name }}" readonly>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of View User Modal -->
+            
+            <!-- Remove User Modal -->
+            <div class="modal fade" id="removeUserModal{{ flag.user_id }}" tabindex="-1" aria-labelledby="removeUserModalLabel{{ flag.user_id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="removeUserModalLabel{{ flag.user_id }}">
+                                <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Remove User
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to remove user "<strong>{{ flag.name }}</strong>"?</p>
+                            <p class="text-danger"><small>This action cannot be undone.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="/remove/user/{{ flag.user_id }}" class="btn btn-danger">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Remove User Modal -->
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle me-2"></i>No flagged users at the moment.
+        </div>
+        {% endif %}
+
+        <!-- Flagged Campaigns -->
+        <h4 class="section-title"><i class="bi bi-flag-fill me-2 text-warning"></i>Flagged Campaigns</h4>
+        
+        {% if flagged_campaigns %}
+        <div class="row">
+            {% for flag in flagged_campaigns %}
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ flag.campaign_name }}</h5>
+                        <span class="badge bg-warning mb-3">Flagged Campaign</span>
+                        
+                        <div class="d-flex gap-2">
+                            <!-- View Modal Button -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#viewFlaggedCampaignModal{{ flag.campaign_id }}">
+                                <i class="bi bi-eye me-1"></i> View
+                            </button>
+                            
+                            <!-- Remove Modal Button -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#removeCampaignModal{{ flag.campaign_id }}">
+                                <i class="bi bi-trash me-1"></i> Remove
+                            </button>
+                            
+                            <a href="/ignore/{{ flag.campaign_id }}" class="btn btn-secondary">
+                                <i class="bi bi-check-circle me-1"></i> Ignore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- View Campaign Modal -->
+            <div class="modal fade" id="viewFlaggedCampaignModal{{ flag.campaign_id }}" tabindex="-1" aria-labelledby="viewCampaignModalLabel{{ flag.campaign_id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="viewCampaignModalLabel{{ flag.campaign_id }}">
+                                <i class="bi bi-info-circle me-2"></i>Campaign Details
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="campaignId" class="form-label">Campaign ID</label>
+                                <input type="text" class="form-control" id="campaignId" value="{{ flag.campaign_id }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campaignName" class="form-label">Campaign Name</label>
+                                <input type="text" class="form-control" id="campaignName" value="{{ flag.campaign_name }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="campaignDescription" class="form-label">Campaign Description</label>
+                                <textarea class="form-control" id="campaignDescription" rows="3" readonly>{{ flag.campaign_description }}</textarea>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="text" class="form-control" id="startDate" value="{{ flag.start_date }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="text" class="form-control" id="endDate" value="{{ flag.end_date }}" readonly>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Budget</label>
+                                <input type="text" class="form-control" id="budget" value="{{ flag.budget }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="niche" class="form-label">Niche</label>
+                                <input type="text" class="form-control" id="niche" value="{{ flag.niche }}" readonly>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="visibility" class="form-label">Visibility</label>
+                                    <input type="text" class="form-control" id="visibility" value="{{ 'Private' if flag.visibility == 1 else 'Public' }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status</label>
+                                    <input type="text" class="form-control" id="status" value="{{ 'Assigned' if flag.status == 1 else 'Not Assigned' }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of View Campaign Modal -->
+            
+            <!-- Remove Campaign Modal -->
+            <div class="modal fade" id="removeCampaignModal{{ flag.campaign_id }}" tabindex="-1" aria-labelledby="removeCampaignModalLabel{{ flag.campaign_id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="removeCampaignModalLabel{{ flag.campaign_id }}">
+                                <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Remove Campaign
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to remove the campaign "<strong>{{ flag.campaign_name }}</strong>"?</p>
+                            <p class="text-danger"><small>This action cannot be undone.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <a href="/remove/campaign/{{ flag.campaign_id }}" class="btn btn-danger">Remove</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Remove Campaign Modal -->
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle me-2"></i>No flagged campaigns at the moment.
+        </div>
+        {% endif %}
+    </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
